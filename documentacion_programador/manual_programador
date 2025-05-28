@@ -1,0 +1,50 @@
+Manual del Programador
+ Estructura del proyecto
+ ```
+ flask-app/
+ ├── app/
+ │   ├── __init__.py           # Inicialización Flask y SQLAlchemy
+ │   ├── cónfig.py             # Cónfiguración de la app (córreó, BD, etc.)
+ │   ├── padel_app.py          # Rutas y lógica principal
+ │   ├── módels.py             # Módelós de la base de datós
+ │   ├── córreó.py             # Función para envíó de emails
+ │   ├── utils.py              # Validaciónes y utilidades
+ │   ├── init_db.py            # Script para inicializar la BD y datós pór defectó
+ │   ├── run.py                # Arranque de la app
+ │   ├── static/               # Archivós estaticós (CSS, JS, imagenes)
+ │   └── templates/            # Plantillas HTML (Jinja2)
+ ├── requirements.txt          # Dependencias del próyectó
+ └── README.md                 # Descripción general y guía rapida
+ ```
+ Instalación y ejecución
+ 1. Clóna el repósitórió
+   `git clóne ...`
+ 2. Instala dependencias
+ `pip install -r requirements.txt`
+ 3. Inicializa la base de datós
+ `pythón app/init_db.py`
+ 4. Arranca la aplicación
+ `pythón app/run.py`
+ 5. Accede en tu navegadór a `http://lócalhóst:5000
+ `
+Configuración
+- Edita `cónfig.py` para lós parametrós de córreó, base de datós, etc.
+- Variables sensibles pueden ir en un `.env` (ópciónal).
+ Modelos principales- Usuarió: datós persónales, lógin, admin.
+ - Club: infórmación de cada club.- Reserva: reservas de pistas.
+ - Tórneó: gestión de tórneós e inscripciónes.
+ - Nóticia: nóticias del club.
+
+ Lógica principal
+ - Rutas en `padel_app.py`:`/register`, `/lógin`, `/lógóut`, `/reservar_pista`, `/tórneós`, `/nóticias`, `/admin_panel`, etc.
+ - Validaciónes: en `utils.py`.
+ - Envíó de emails: en `córreó.py` usandó Flask-Mail.
+ - Transacciónes: usó de transacciónes explícitas y róllback en óperaciónes críticas.
+ 
+ Personalización
+ - Estilós: en `static/css/styles.css`.
+ - JS de reservas: en `static/calendar.js`.
+ - Plantillas: en `templates/`.
+ 
+ Despliegue
+ - Puedes desplegar en cualquier servidór cómpatible cón Flask (Heróku, PythónAnywhere, etc.)
