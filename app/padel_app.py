@@ -1,7 +1,7 @@
 import os
 import sys
 import locale
-from flask import render_template, redirect, url_for, request, Flask, flash, session, jsonify
+from flask import request, render_template, redirect, url_for, request, Flask, flash, session, jsonify, make_response
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta
 from utils import validar_datos_registro
@@ -65,8 +65,9 @@ app.jinja_env.globals['is_admin_user'] = is_admin_user
 
 @app.route('/')
 def home_redirect():
+    consent = request.cookies.get('cookie_consent')
     """Página principal de la aplicación."""
-    return render_template('home.html')
+    return render_template('home.html', consent=consent)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -585,10 +586,26 @@ def admin_panel():
     """Panel principal de administración."""
     return render_template('admin_panel.html')
 
+@app.route('/set-consent/<decision>')
+def set_consent(decision):
+    if decision not in ['accepted', 'rejected']:
+        return "Opción inválida", 400
+    resp = make_response('OK')  # Mejor devolver texto simple aquí para fetch
+    resp.set_cookie('cookie_consent', decision, max_age=60*60*24*365, path='/')
+    return resp
+
 @app.route('/politica-cookies')
 def politica_cookies():
-    """Página de política de cookies."""
-    return render_template('politica-cookies.html')
+    return render_template("politica-cookies.html")
+
+@app.context_processor
+def inject_cookie_consent():
+    return {'consent': request.cookies.get('cookie_consent')}
+
+@app.route('/aviso-legal')
+def aviso_legal():
+    return render_template('aviso_legal.html')
+
 
 # Punto de entrada de la aplicación
 if __name__ == '__main__':
