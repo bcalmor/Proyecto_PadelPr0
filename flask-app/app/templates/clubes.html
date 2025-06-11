@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+
+{% block title %}Clubes{% endblock %}
+
+{% block content %}
+<h2 class="main-title">Clubes</h2>
+<p>Explora los clubes de pádel disponibles en nuestra plataforma.</p>
+
+<div class="club-list" style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;">
+    <!-- Club 1 -->
+    <div class="club" style="background:#A3D900; border:1px solid #1F2A44; border-radius:10px; padding:18px; width:240px; box-shadow:0 2px 8px #0001; display:flex; flex-direction:column; align-items:center;">
+        <img src="{{ url_for('static', filename='images/PADEL_CENTRO.png') }}" alt="Imagen de {{ clubes[0].nombre }}" style="width:180px; height:130px; border-radius:10px; margin-bottom:10px; object-fit:contain; background:#fff; display:block;">
+        <h3 style="margin-bottom:6px; color:#1F2A44;">{{ clubes[0].nombre }}</h3>
+        <p style="font-size:0.98em; color:#333; margin-bottom:6px;"><strong>Ubicación:</strong> {{ clubes[0].ubicacion }}</p>
+        <p style="font-size:0.98em; color:#333; margin-bottom:6px;"><strong>Horario:</strong> {{ clubes[0].horario or '8:00-23:00' }}</p>
+        <p style="font-size:0.98em; color:#333; margin-bottom:6px;"><strong>Teléfono:</strong> {{ clubes[0].telefono }}</p>
+        <p style="font-size:0.98em; color:#333; margin-bottom:6px;"><strong>Email:</strong> <a href="mailto:{{ clubes[0].email }}" style="color:#1F2A44;">{{ clubes[0].email }}</a></p>
+        <p style="font-size:0.98em; color:#333; margin-bottom:6px;">
+            <strong>Valoración:</strong>
+            {% set estrellas = 4.7 %}
+            {% set llenas = estrellas|int %}
+            {% set media = 1 if estrellas - llenas >= 0.25 and estrellas - llenas < 0.75 else 0 %}
+            {% set vacias = 5 - llenas - media %}
+            {% for i in range(llenas) %}
+                <i class="fas fa-star" style="color:#fff;"></i>
+            {% endfor %}
+            {% if media %}
+                <i class="fas fa-star-half-alt" style="color:#fff;"></i>
+            {% endif %}
+            {% for i in range(vacias) %}
+                <i class="far fa-star" style="color:#fff;"></i>
+            {% endfor %}
+            <span style="color:#1F2A44;">({{ estrellas }}/5)</span>
+        </p>
+        <p style="font-size:0.96em; color:#222; margin-bottom:10px;">
+            Club céntrico con ambiente familiar, pistas cubiertas y servicios de cafetería. Ideal para jugar todo el año y disfrutar de torneos sociales.
+        </p>
+        <form method="POST" action="{{ url_for('contactar_club', club_id=clubes[0].id) }}" style="width:100%; margin-top:auto;">
+            <label for="nombre1">Tu Nombre:</label>
+            <input type="text" id="nombre1" name="nombre" required>
+            <label for="email1">Tu Email:</label>
+            <input type="email" id="email1" name="email" required>
+            <label for="mensaje1">Mensaje:</label>
+            <textarea id="mensaje1" name="mensaje" required></textarea>
+            <button type="submit" class="btn" style="width:100%;">Enviar</button>
+        </form>
+    </div>
+    <!-- Club 2 -->
+    <div class="club" style="background:#A3D900; border:1px solid #1F2A44; border-radius:10px; padding:18px; width:240px; box-shadow:0 2px 8px #0001; display:flex; flex-direction:column; align-items:center;">
+        <img src="{{ url_for('static', filename='images/BC+PADEL.png') }}" alt="Imagen de {{ clubes[1].nombre }}" style="width:180px; height:130px; border-radius:10px; margin-bottom:10px; object-fit:contain; background:#fff; display:block;">
+        <h3 style="margin-bottom:6px; color:#1F2A44;">{{ clubes[1].nombre }}</h3>
+        <p style="font-size:0.98em; color:#333; margin-bottom:6px;"><strong>Ubicación:</strong> {{ clubes[1].ubicacion }}</p>
+        <p style="font-size:0.98em; color:#333; margin-bottom:6px;"><strong>Horario:</strong> {{ clubes[1].horario or '9:00-22:00' }}</p>
+        <p style="font-size:0.98em; color:#333; margin-bottom:6px;"><strong>Teléfono:</strong> {{ clubes[1].telefono }}</p>
+        <p style="font-size:0.98em; color:#333; margin-bottom:6px;"><strong>Email:</strong> <a href="mailto:{{ clubes[1].email }}" style="color:#1F2A44;">{{ clubes[1].email }}</a></p>
+        <p style="font-size:0.98em; color:#333; margin-bottom:6px;">
+            <strong>Valoración:</strong>
+            {% set estrellas = 4.3 %}
+            {% set llenas = estrellas|int %}
+            {% set media = 1 if estrellas - llenas >= 0.25 and estrellas - llenas < 0.75 else 0 %}
+            {% set vacias = 5 - llenas - media %}
+            {% for i in range(llenas) %}
+                <i class="fas fa-star" style="color:#fff;"></i>
+            {% endfor %}
+            {% if media %}
+                <i class="fas fa-star-half-alt" style="color:#fff;"></i>
+            {% endif %}
+            {% for i in range(vacias) %}
+                <i class="far fa-star" style="color:#fff;"></i>
+            {% endfor %}
+            <span style="color:#1F2A44;">({{ estrellas }}/5)</span>
+        </p>
+        <p style="font-size:0.96em; color:#222; margin-bottom:10px;">
+            Club rodeado de zonas verdes, perfecto para familias y grupos. Dispone de pistas panorámicas y actividades para todas las edades.
+        </p>
+        <form method="POST" action="{{ url_for('contactar_club', club_id=clubes[1].id) }}" style="width:100%; margin-top:auto;">
+            <label for="nombre2">Tu Nombre:</label>
+            <input type="text" id="nombre2" name="nombre" required>
+            <label for="email2">Tu Email:</label>
+            <input type="email" id="email2" name="email" required>
+            <label for="mensaje2">Mensaje:</label>
+            <textarea id="mensaje2" name="mensaje" required></textarea>
+            <button type="submit" class="btn" style="width:100%;">Enviar</button>
+        </form>
+    </div>
+    <!-- Club 3 -->
+    <div class="club" style="background:#A3D900; border:1px solid #1F2A44; border-radius:10px; padding:18px; width:240px; box-shadow:0 2px 8px #0001; display:flex; flex-direction:column; align-items:center;">
+        <img src="{{ url_for('static', filename='images/NUEVA_CIUDAD.png') }}" alt="Imagen de {{ clubes[2].nombre }}" style="width:180px; height:130px; border-radius:10px; margin-bottom:10px; object-fit:contain; background:#fff; display:block;">
+        <h3 style="margin-bottom:6px; color:#1F2A44;">{{ clubes[2].nombre }}</h3>
+        <p style="font-size:0.98em; color:#333; margin-bottom:6px;"><strong>Ubicación:</strong> {{ clubes[2].ubicacion }}</p>
+        <p style="font-size:0.98em; color:#333; margin-bottom:6px;"><strong>Horario:</strong> {{ clubes[2].horario or '7:30-22:30' }}</p>
+        <p style="font-size:0.98em; color:#333; margin-bottom:6px;"><strong>Teléfono:</strong> {{ clubes[2].telefono }}</p>
+        <p style="font-size:0.98em; color:#333; margin-bottom:6px;"><strong>Email:</strong> <a href="mailto:{{ clubes[2].email }}" style="color:#1F2A44;">{{ clubes[2].email }}</a></p>
+        <p style="font-size:0.98em; color:#333; margin-bottom:6px;">
+            <strong>Valoración:</strong>
+            {% set estrellas = 4.9 %}
+            {% set llenas = estrellas|int %}
+            {% set media = 1 if estrellas - llenas >= 0.25 and estrellas - llenas < 0.75 else 0 %}
+            {% set vacias = 5 - llenas - media %}
+            {% for i in range(llenas) %}
+                <i class="fas fa-star" style="color:#fff;"></i>
+            {% endfor %}
+            {% if media %}
+                <i class="fas fa-star-half-alt" style="color:#fff;"></i>
+            {% endif %}
+            {% for i in range(vacias) %}
+                <i class="far fa-star" style="color:#fff;"></i>
+            {% endfor %}
+            <span style="color:#1F2A44;">({{ estrellas }}/5)</span>
+        </p>
+        <p style="font-size:0.96em; color:#222; margin-bottom:10px;">
+            Instalaciones de última generación, pistas de cristal y zona fitness. El club favorito de los jugadores más exigentes de Mérida.
+        </p>
+        <form method="POST" action="{{ url_for('contactar_club', club_id=clubes[2].id) }}" style="width:100%; margin-top:auto;">
+            <label for="nombre3">Tu Nombre:</label>
+            <input type="text" id="nombre3" name="nombre" required>
+            <label for="email3">Tu Email:</label>
+            <input type="email" id="email3" name="email" required>
+            <label for="mensaje3">Mensaje:</label>
+            <textarea id="mensaje3" name="mensaje" required></textarea>
+            <button type="submit" class="btn" style="width:100%;">Enviar</button>
+        </form>
+    </div>
+    <!-- Club 4 -->
+    <div class="club" style="background:#A3D900; border:1px solid #1F2A44; border-radius:10px; padding:18px; width:240px; box-shadow:0 2px 8px #0001; display:flex; flex-direction:column; align-items:center;">
+        <img src="{{ url_for('static', filename='images/PRO_MERIDA.png') }}" alt="Imagen de {{ clubes[3].nombre }}" style="width:180px; height:130px; border-radius:10px; margin-bottom:10px; object-fit:contain; background:#fff; display:block;">
+        <h3 style="margin-bottom:6px; color:#1F2A44;">{{ clubes[3].nombre }}</h3>
+        <p style="font-size:0.98em; color:#333; margin-bottom:6px;"><strong>Ubicación:</strong> {{ clubes[3].ubicacion }}</p>
+        <p style="font-size:0.98em; color:#333; margin-bottom:6px;"><strong>Horario:</strong> {{ clubes[3].horario or '8:00-00:00' }}</p>
+        <p style="font-size:0.98em; color:#333; margin-bottom:6px;"><strong>Teléfono:</strong> {{ clubes[3].telefono }}</p>
+        <p style="font-size:0.98em; color:#333; margin-bottom:6px;"><strong>Email:</strong><br>
+            <a href="mailto:{{ clubes[3].email }}" style="color:#1F2A44;">{{ clubes[3].email }}</a>
+        </p>
+        <p style="font-size:0.98em; color:#333; margin-bottom:6px;">
+            <strong>Valoración:</strong>
+            {% set estrellas = 4.5 %}
+            {% set llenas = estrellas|int %}
+            {% set media = 1 if estrellas - llenas >= 0.25 and estrellas - llenas < 0.75 else 0 %}
+            {% set vacias = 5 - llenas - media %}
+            {% for i in range(llenas) %}
+                <i class="fas fa-star" style="color:#fff;"></i>
+            {% endfor %}
+            {% if media %}
+                <i class="fas fa-star-half-alt" style="color:#fff;"></i>
+            {% endif %}
+            {% for i in range(vacias) %}
+                <i class="far fa-star" style="color:#fff;"></i>
+            {% endfor %}
+            <span style="color:#1F2A44;">({{ estrellas }}/5)</span>
+        </p>
+        <p style="font-size:0.96em; color:#222; margin-bottom:10px;">
+            Club con ambiente joven, escuela de pádel y organización de eventos. Perfecto para mejorar tu nivel y conocer nuevos jugadores.
+        </p>
+        <form method="POST" action="{{ url_for('contactar_club', club_id=clubes[3].id) }}" style="width:100%; margin-top:auto;">
+            <label for="nombre4">Tu Nombre:</label>
+            <input type="text" id="nombre4" name="nombre" required>
+            <label for="email4">Tu Email:</label>
+            <input type="email" id="email4" name="email" required>
+            <label for="mensaje4">Mensaje:</label>
+            <textarea id="mensaje4" name="mensaje" required></textarea>
+            <button type="submit" class="btn" style="width:100%;">Enviar</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

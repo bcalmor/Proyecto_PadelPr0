@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}Mis Reservas{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Mis Reservas</h2>
+</div>
+<div>
+    {% if reservas and reservas|length > 0 %}
+        <ul class="reservas-list">
+            {% for reserva in reservas %}
+                <li class="reserva-item">
+                    <h3>Reserva:</h3>
+                    <p><strong>Fecha:</strong> {{ reserva.fecha | datetimeformat }}</p>
+                    <p><strong>Hora:</strong> {{ reserva.hora }} h</p>
+                    <p><strong>Tipo de pista:</strong> 
+                        {% if reserva.pista == "pista2" %}
+                            Pista 2 jugadores
+                        {% elif reserva.pista == "pista4" %}
+                            Pista 4 jugadores
+                        {% else %}
+                            No especificado
+                        {% endif %}
+                    </p>
+                    <p><strong>Pista asignada:</strong> Nº {{ reserva.numero_pista }}</p>
+                    <button class="btn cancelar-btn" onclick="cancelarReserva('{{ reserva.fecha }}', '{{ reserva.hora }}', '{{ reserva.numero_pista }}')">
+                        Cancelar Reserva
+                    </button>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No tienes reservas realizadas.</p>
+    {% endif %}
+</div>
+
+<script>
+async function cancelarReserva(fecha, hora, numeroPista) {
+    if (!confirm("¿Estás seguro de que deseas cancelar esta reserva?")) {
+        return;
+    }
+
+    console.log({ fecha, hora, numeroPista }); // Verificar los datos enviados
+
+    const response = await fetch('/api/cancelar_reserva', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fecha, hora, numero_pista: numeroPista }),
+    });
+
+    const data = await response.json();
+    if (data.error) {
+        alert(data.error);
+    } else {
+        alert(data.message);
+        location.reload(); // Recargar la página para actualizar la lista de reservas
+    }
+}
+
+function confirmarReserva() {
+    // Recoge los valores seleccionados
+    const club = document.getElementById('club').value;
+    const tipoPista = document.querySelector('input[name="tipoPista"]:checked').value;
+    // Estas variables deben estar definidas en tu calendar.js
+    // selectedDate, selectedHour, selectedPista
+    if (!selectedDate || !selectedHour || !selectedPista) {
+        alert('Por favor, selecciona una fecha, hora y pista antes de continuar.');
+        return;
+    }
+
+    fetch('/api/reservas', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            club: club,
+            fecha: selectedDate,
+            hora: selectedHour,
+            pista: tipoPista,
+            numero_pista: selectedPista
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            alert(data.error);
+        } else {
+            alert('Reserva realizada correctamente en ' + club + '. Pista asignada: ' + data.numero_pista);
+            window.location.reload();
+        }
+    });
+}
+</script>
+{% endblock %}

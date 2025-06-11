@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+    <title>{% block title %}App de Pádel{% endblock %}</title>
+
+</head>
+<body>
+    <header>
+        <div class="header-left">
+            <h1>
+                <a href="{{ url_for('home_redirect') }}" class="logo-link">
+                    <img src="{{ url_for('static', filename='images/log1.png') }}" alt="PadelPro Logo" class="logo-image">
+        
+
+                </a>
+            </h1>
+            <div class="contact-info-header">
+                <span class="icon">📞</span> +34 123 456 789
+                <span class="icon">📧</span> padel.pr0.28@gmail.com
+                <span class="icon">📍</span> Clubes de Pádel en Mérida
+            </div>
+        </div>
+        <nav class="navbar">
+            <ul class="nav-menu">
+                <li><a href="{{ url_for('home_redirect') }}">Inicio</a></li>
+                <!-- ACTIVIDADES con SUBMENÚ -->
+        <li class="dropdown">
+            <a href="{{ url_for('actividades') }}">Actividades</a>
+            <ul class="dropdown-content">
+                <li><a href="{{ url_for('clases') }}">Clases</a></li>
+                <li><a href="{{ url_for('torneos') }}">Torneos</a></li>
+                <li><a href="{{ url_for('pickleball') }}">Pickleball</a></li>
+            </ul>
+        </li>
+                <li><a href="{{ url_for('clubes') }}">Clubes</a></li>
+                <li><a href="{{ url_for('noticias') }}">Noticias</a></li>
+                <li><a href="{{ url_for('contacto') }}">Contáctanos</a></li>
+                {% if not session.get('usuario') %}
+                    <li><a href="{{ url_for('login') }}">Iniciar Sesión</a></li>
+                    <li><a href="{{ url_for('register') }}">Regístrate</a></li>
+                {% endif %}
+                {% if session.get('usuario') %}
+                    <li class="user-dropdown">
+                        <span class="user-name">{{ session['usuario'] }}</span>
+                        <ul class="user-dropdown-content">
+                            <li><a href="{{ url_for('mis_datos') }}">Mis Datos</a></li>
+                            <li><a href="{{ url_for('mis_reservas') }}">Mis Reservas</a></li>
+                            <li><a href="{{ url_for('mis_actividades') }}">Mis Actividades</a></li>
+                            <li><a href="{{ url_for('reservar_pista') }}">Reservar Pista</a></li>
+                            <li><a href="{{ url_for('torneos') }}">Torneos</a></li>
+                            <li><a href="{{ url_for('logout') }}">Cerrar Sesión</a></li>
+                            
+                        </ul>
+                    </li>
+                    {% if session.get('usuario') and is_admin_user(session['usuario']) %}
+                        <li><a href="{{ url_for('admin_panel') }}">PANEL ADMIN</a></li>
+                    {% endif %}
+                {% endif %}
+            </ul>
+        </nav>        
+    </header>
+    <main>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="flash-messages">
+            {% for category, message in messages %}
+            <div class="flash-message {{ category }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+    </main>
+    <footer class="footer">
+        <div class="footer-container">
+            <!-- Sección de contacto -->
+            <div class="footer-section">
+                <h4>Contacto</h4>
+                <p>Teléfono: <a href="tel:+34987654321">+34 123 456 789</a></p>
+                <p>Email: <a href="mailto:info@padelclub.com">padel.pr0.28@gmail.com</a></p>
+            </div>
+
+            <!-- Métodos de pago -->
+            <div class="footer-section">
+                <h4>Métodos de Pago</h4>
+                <div class="payment-names">
+                    <span>Visa</span>
+                    <span>MasterCard</span>
+                    <span>American Express</span>
+                    <span>PayPal</span>
+                </div>
+                <div class="payment-methods">
+                    <img src="{{ url_for('static', filename='images/payment-methods.png') }}" alt="Métodos de Pago">
+                </div>
+            </div>
+
+            <!-- Enlaces útiles -->
+            <div class="footer-section">
+                <h4>Enlaces Útiles</h4>
+                <ul>
+                    <li><a href="{{ url_for('torneos') }}">Torneos</a></li>
+                    <li><a href="{{ url_for('clases') }}">Clases</a></li>
+                    <li><a href="{{ url_for('reservar_pista') }}">Reservar Pista</a></li>
+                    <li><a href="{{ url_for('pickleball') }}">Pickleball</a></li>
+                    <li><a href="{{ url_for('noticias') }}">Noticias</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+    <p>
+        &copy; 2025 PadelPr0 Club. Proyecto desarrollado por Belén Caldera Moreno.
+        Todos los derechos reservados. |
+        <a href="{{ url_for('aviso_legal') }}">Aviso Legal</a> |
+        <a href="{{ url_for('politica_cookies') }}">Política de Cookies</a>
+    </p>
+</div>
+
+    </footer>
+    <script>
+        function toggleMenu() {
+            const menu = document.getElementById('menu');
+            menu.classList.toggle('hidden');
+        }
+    </script>
+    <script>
+        let timeout;
+
+        // Configura el tiempo de inactividad (en milisegundos)
+        const INACTIVITY_TIME = 15 * 60 * 1000; // 15 minutos
+
+        // Función para cerrar sesión
+        function cerrarSesion() {
+            fetch("{{ url_for('logout') }}", { method: "POST" })
+                .then(() => {
+                    alert("Tu sesión ha expirado por inactividad.");
+                    window.location.href = "{{ url_for('login') }}";
+                });
+        }
+
+        // Reinicia el temporizador de inactividad
+        function resetInactivityTimer() {
+            clearTimeout(timeout);
+            timeout = setTimeout(cerrarSesion, INACTIVITY_TIME);
+        }
+
+        // Detecta actividad del usuario
+        window.onload = resetInactivityTimer;
+        document.onmousemove = resetInactivityTimer;
+        document.onkeypress = resetInactivityTimer;
+        document.onscroll = resetInactivityTimer;
+    </script>
+    {% if consent not in ['accepted', 'rejected'] %}
+<div id="cookie-banner" style="position: fixed; bottom: 0; left: 0; right: 0; background: #333; color: white; padding: 1em; text-align: center; z-index: 9999;">
+    <p>Este sitio web utiliza cookies para mejorar tu experiencia y ofrecer contenido personalizado.</p>
+    <button id="btn-accept" style="margin-right: 10px; cursor: pointer;">Aceptar</button>
+    <button id="btn-reject" style="cursor: pointer;">Rechazar</button>
+    <a href="{{ url_for('politica_cookies') }}" style="color: #ccc; margin-left: 1em;">Leer más</a>
+</div>
+{% endif %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const banner = document.getElementById("cookie-banner");
+    if (banner) {
+        document.getElementById("btn-accept").addEventListener("click", () => {
+            setConsent("accepted");
+        });
+        document.getElementById("btn-reject").addEventListener("click", () => {
+            setConsent("rejected");
+        });
+    }
+
+    function setConsent(decision) {
+    fetch(`/set-consent/${decision}`)
+        .then(() => {
+            banner.style.display = "none";
+        })
+        .catch(err => console.error("Error guardando consentimiento:", err));
+}
+});
+</script>
+
+</body>
+</html>
