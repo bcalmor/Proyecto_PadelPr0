@@ -106,14 +106,13 @@
 
             <!-- Enlaces útiles -->
             <div class="footer-section">
-                <h4>Enlaces Útiles</h4>
+                <h4>Secciones</h4>
                 <ul>
-                    <li><a href="{{ url_for('torneos') }}">Torneos</a></li>
-                    <li><a href="{{ url_for('clases') }}">Clases</a></li>
+                    <a href="{{ url_for('contacto') }}">Contáctanos</a></li>
+                    <a href="{{ url_for('actividades') }}">Actividades</a>
                     <a href="{% if not session.get('usuario') %}{{ url_for('login') }}{% else %}{{ url_for('reservar_pista') }}{% endif %}">
                             Reservar Pista
                         </a>
-                    <li><a href="{{ url_for('pickleball') }}">Pickleball</a></li>
                     <li><a href="{{ url_for('noticias') }}">Noticias</a></li>
                 </ul>
             </div>

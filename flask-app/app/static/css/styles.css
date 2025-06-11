@@ -1663,6 +1663,8 @@ h1, h2, h3, h4, h5, h6 {
     justify-content: center; /* Centra los clubes horizontalmente */
     margin: 20px 0;
     padding: 0;
+    max-width: 100%;
+    
 }
 
 .club {
@@ -1670,7 +1672,7 @@ h1, h2, h3, h4, h5, h6 {
     border: 1px solid #1F2A44; /* Borde azul */
     border-radius: 10px;
     padding: 30px; /* Más espacio interno */
-    width: 400px; /* Ancho más grande */
+    width: 500px; /* Ancho más grande */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra para destacar */
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
@@ -1691,6 +1693,9 @@ h1, h2, h3, h4, h5, h6 {
     margin: 10px 0;
     font-size: 1rem; /* Texto más grande */
     color: #333; /* Gris oscuro */
+    word-break: break-word;
+    overflow-wrap: break-word;
+    
 }
 
 .club form {
