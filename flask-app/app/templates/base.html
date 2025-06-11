@@ -20,7 +20,7 @@
 
                 </a>
             </h1>
-            <div class="contact-info-header">
+            <div class="contact-info-header hide-on-mobile">
                 <span class="icon">📞</span> +34 123 456 789
                 <span class="icon">📧</span> padel.pr0.28@gmail.com
                 <span class="icon">📍</span> Clubes de Pádel en Mérida
@@ -28,41 +28,45 @@
         </div>
         <nav class="navbar">
             <ul class="nav-menu">
-                <li><a href="{{ url_for('home_redirect') }}">Inicio</a></li>
-                <!-- ACTIVIDADES con SUBMENÚ -->
-        <li class="dropdown">
-            <a href="{{ url_for('actividades') }}">Actividades</a>
-            <ul class="dropdown-content">
-                <li><a href="{{ url_for('clases') }}">Clases</a></li>
+    <li class="hide-on-mobile-menu"><a href="{{ url_for('home_redirect') }}">Inicio</a></li>
+
+    <!-- ACTIVIDADES con SUBMENÚ -->
+    <li class="dropdown hide-on-mobile-menu">
+        <a href="{{ url_for('actividades') }}">Actividades</a>
+        <ul class="dropdown-content">
+            <li><a href="{{ url_for('clases') }}">Clases</a></li>
+            <li><a href="{{ url_for('torneos') }}">Torneos</a></li>
+            <li><a href="{{ url_for('pickleball') }}">Pickleball</a></li>
+        </ul>
+    </li>
+
+    <li class="hide-on-mobile-menu"><a href="{{ url_for('clubes') }}">Clubes</a></li>
+    <li class="hide-on-mobile-menu"><a href="{{ url_for('noticias') }}">Noticias</a></li>
+    <li class="hide-on-mobile-menu"><a href="{{ url_for('contacto') }}">Contáctanos</a></li>
+
+    {% if not session.get('usuario') %}
+        <li><a href="{{ url_for('login') }}">Iniciar Sesión</a></li>
+        <li class="hide-on-mobile-menu"><a href="{{ url_for('register') }}">Regístrate</a></li>
+    {% endif %}
+
+    {% if session.get('usuario') %}
+        <li class="user-dropdown">
+            <span class="user-name">{{ session['usuario'] }}</span>
+            <ul class="user-dropdown-content">
+                <li><a href="{{ url_for('mis_datos') }}">Mis Datos</a></li>
+                <li><a href="{{ url_for('mis_reservas') }}">Mis Reservas</a></li>
+                <li><a href="{{ url_for('mis_actividades') }}">Mis Actividades</a></li>
+                <li><a href="{{ url_for('reservar_pista') }}">Reservar Pista</a></li>
                 <li><a href="{{ url_for('torneos') }}">Torneos</a></li>
-                <li><a href="{{ url_for('pickleball') }}">Pickleball</a></li>
+                <li><a href="{{ url_for('logout') }}">Cerrar Sesión</a></li>
             </ul>
         </li>
-                <li><a href="{{ url_for('clubes') }}">Clubes</a></li>
-                <li><a href="{{ url_for('noticias') }}">Noticias</a></li>
-                <li><a href="{{ url_for('contacto') }}">Contáctanos</a></li>
-                {% if not session.get('usuario') %}
-                    <li><a href="{{ url_for('login') }}">Iniciar Sesión</a></li>
-                    <li><a href="{{ url_for('register') }}">Regístrate</a></li>
-                {% endif %}
-                {% if session.get('usuario') %}
-                    <li class="user-dropdown">
-                        <span class="user-name">{{ session['usuario'] }}</span>
-                        <ul class="user-dropdown-content">
-                            <li><a href="{{ url_for('mis_datos') }}">Mis Datos</a></li>
-                            <li><a href="{{ url_for('mis_reservas') }}">Mis Reservas</a></li>
-                            <li><a href="{{ url_for('mis_actividades') }}">Mis Actividades</a></li>
-                            <li><a href="{{ url_for('reservar_pista') }}">Reservar Pista</a></li>
-                            <li><a href="{{ url_for('torneos') }}">Torneos</a></li>
-                            <li><a href="{{ url_for('logout') }}">Cerrar Sesión</a></li>
-                            
-                        </ul>
-                    </li>
-                    {% if session.get('usuario') and is_admin_user(session['usuario']) %}
-                        <li><a href="{{ url_for('admin_panel') }}">PANEL ADMIN</a></li>
-                    {% endif %}
-                {% endif %}
-            </ul>
+        {% if is_admin_user(session['usuario']) %}
+            <li><a href="{{ url_for('admin_panel') }}">PANEL ADMIN</a></li>
+        {% endif %}
+    {% endif %}
+</ul>
+
         </nav>        
     </header>
     <main>
@@ -106,7 +110,9 @@
                 <ul>
                     <li><a href="{{ url_for('torneos') }}">Torneos</a></li>
                     <li><a href="{{ url_for('clases') }}">Clases</a></li>
-                    <li><a href="{{ url_for('reservar_pista') }}">Reservar Pista</a></li>
+                    <a href="{% if not session.get('usuario') %}{{ url_for('login') }}{% else %}{{ url_for('reservar_pista') }}{% endif %}">
+                            Reservar Pista
+                        </a>
                     <li><a href="{{ url_for('pickleball') }}">Pickleball</a></li>
                     <li><a href="{{ url_for('noticias') }}">Noticias</a></li>
                 </ul>

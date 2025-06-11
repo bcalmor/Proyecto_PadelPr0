@@ -98,14 +98,23 @@ def register():
             "usuario": request.form['usuario'],
             "password": request.form['password']
         }
+
+        # Validaciones personalizadas (por ejemplo, formato, longitud, etc.)
         errores = validar_datos_registro(datos)
+
+        # Validaciones por existencia en BD
+        if Usuario.query.filter_by(usuario=datos['usuario']).first():
+            errores.append('El nombre de usuario ya existe.')
+        if Usuario.query.filter_by(email=datos['email']).first():
+            errores.append('Ya existe un usuario registrado con ese email.')
+        if Usuario.query.filter_by(dni=datos['dni']).first():
+            errores.append('Ya existe un usuario registrado con ese DNI.')
+
         if errores:
             for error in errores:
                 flash(error, 'danger')
             return render_template('register.html')
-        if Usuario.query.filter_by(usuario=datos['usuario']).first():
-            flash('El usuario ya existe.', 'danger')
-            return render_template('register.html')
+
         nuevo_usuario = Usuario(
             dni=datos['dni'],
             nombre=datos['nombre'],
@@ -119,17 +128,37 @@ def register():
             is_admin=False
         )
         db.session.add(nuevo_usuario)
-        db.session.commit() # <-- Transacción implícita aquí
-        # Enviar email de confirmación de registro
+        db.session.commit()
+
+        # Enviar email de confirmación
         enviar_email(
-            "Confirmación de Registro",
+            "Bienvenido a PadelPr0 - Confirmación de Registro",
             [datos['email']],
-            f"Hola {datos['nombre']}, gracias por registrarte.",
-            f"<p>Hola <strong>{datos['nombre']}</strong>, gracias por registrarte.</p>"
+            f"""Hola {datos['nombre']},
+
+Gracias por registrarte en nuestra web. Ya puedes iniciar sesión con tu cuenta.
+
+¡Nos alegra tenerte con nosotros!
+""",
+            f"""
+            <html>
+            <body style="font-family: Arial, sans-serif; color: #333;">
+                <h2 style="color: #2c3e50;">¡Bienvenido/a a <span style="color:#2980b9;">PadelPr0</span>!</h2>
+                <p>Hola <strong>{datos['nombre']}</strong>,</p>
+                <p>Gracias por registrarte. Ya puedes iniciar sesión con tu cuenta de usuario. Clic aqui: https://padelpr0.pythonanywhere.com/login</p>
+                <p>Si tienes alguna duda, puedes responder a este correo o contactar mediante nuestra web: https://padelpr0.pythonanywhere.com/contacto</p>
+                <hr>
+                <p style="font-size:12px; color:#888;">Este mensaje ha sido generado automáticamente por PadelPr0.</p>
+            </body>
+            </html>
+            """
         )
+
         flash('Registro exitoso. Ahora puedes iniciar sesión.', 'success')
         return render_template('register.html')
+
     return render_template('register.html')
+
 
 @app.route('/actividades')
 def actividades():
@@ -274,6 +303,7 @@ def api_reservas():
         f"<li><strong>Tipo de pista:</strong> {tipo_pista}</li>"
         f"<li><strong>Pista asignada:</strong> Nº {numero_pista_asignada}</li>"
         f"</ul>"
+         f"<p>Puedes revisar la información en la web </p>"
     )
 
     return jsonify({"message": "Reserva guardada exitosamente.", "numero_pista": numero_pista_asignada}), 200

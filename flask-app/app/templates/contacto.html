@@ -3,10 +3,17 @@
 {% block title %}Contáctanos{% endblock %}
 
 {% block content %}
+<style>
+  body {
+    background-image: none !important;
+    background-color: #f0f0f0 !important; /* el color que quieras */
+  }
+</style>
 <div class="container">
+    
     <h2 class="main-title">Contáctanos</h2>
     <p>¿Tienes alguna pregunta o sugerencia? Rellena el formulario y nos pondremos en contacto contigo lo antes posible.</p>
-
+    
     <form action="{{ url_for('contacto') }}" method="POST" class="contact-form">
         <div class="form-group">
             <label for="nombre">Nombre</label>

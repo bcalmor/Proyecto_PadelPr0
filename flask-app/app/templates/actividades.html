@@ -3,7 +3,12 @@
 {% block title %}Actividades de Pádel{% endblock %}
 
 {% block content %}
-<section>
+<style>
+  body {
+    background-image: none !important;
+    background-color: #f0f0f0 !important; /* el color que quieras */
+  }
+</style>
     <h2 class="main-title">Actividades</h2>
     <div class="activity">
         <h3><a href="{{ url_for('torneos') }}">Torneos</a></h3>
