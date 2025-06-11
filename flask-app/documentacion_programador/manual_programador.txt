@@ -1,0 +1,140 @@
+Manual del Programador
+======================
+
+Este documento describe la estructura, instalación, despliegue y buenas prácticas para el proyecto **PadelPr0 Club**.
+
+---
+
+Estructura del Proyecto
+-----------------------
+```
+flask-app/
+ ├── app/
+ │   ├── __init__.py           # Inicialización Flask y SQLAlchemy
+ │   ├── config.py             # Configuración de la app (correo, BD, etc.)
+ │   ├── padel_app.py          # Rutas y lógica principal
+ │   ├── models.py             # Modelos de la base de datos
+ │   ├── correo.py             # Función para envío de emails
+ │   ├── utils.py              # Validaciones y utilidades
+ │   ├── init_db.py            # Script para inicializar la BD y datos por defecto
+ │   ├── run.py                # Arranque de la app
+ │   ├── static/               # Archivos estáticos (CSS, JS, imágenes)
+ │   └── templates/            # Plantillas HTML (Jinja2)
+ ├── requirements.txt          # Dependencias del proyecto
+ └── README.md                 # Descripción general y guía rápida
+```
+
+---
+
+Instalación y Ejecución Local
+-----------------------------
+1. Clonar el repositorio:
+   ```
+   git clone <URL_DEL_REPOSITORIO>
+   cd flask-app
+   ```
+
+2. Instalar las dependencias:
+   ```
+   pip install -r requirements.txt
+   ```
+
+3. Inicializar la base de datos:
+   ```
+   python app/init_db.py
+   ```
+
+4. Arrancar la aplicación:
+   ```
+   python app/run.py
+   ```
+
+5. Acceder en el navegador a:
+   ```
+   http://localhost:5000
+   ```
+
+---
+
+Configuración
+-------------
+- Editar `config.py` para los parámetros de correo, base de datos, etc.
+- Las variables sensibles pueden ir en un archivo `.env` (opcional, no subir a repositorio público).
+
+---
+
+Despliegue en PythonAnywhere
+----------------------------
+Para publicar la aplicación en Internet:
+
+1. Comprimir la carpeta `app` en un archivo ZIP.
+2. Subir `app.zip` y `requirements.txt` desde la pestaña **Files** de PythonAnywhere.
+3. Abrir una consola Bash en PythonAnywhere (Consoles > Bash).
+4. Descomprimir el ZIP:
+   ```
+   unzip app.zip
+   ```
+5. Crear y activar un entorno virtual (Python 3.10):
+   ```
+   python3.10 -m venv /home/TU_USUARIO/myenv
+   source /home/TU_USUARIO/myenv/bin/activate
+   pip install -r /home/TU_USUARIO/requirements.txt
+   ```
+   *(Sustituir `TU_USUARIO` por el usuario real de PythonAnywhere)*
+
+6. En la pestaña **Web**:
+   - **Source code:** `/home/TU_USUARIO/app`
+   - **Virtualenv:** `/home/TU_USUARIO/myenv`
+   - **WSGI configuration file:** Editar para importar la aplicación Flask:
+     ```python
+     import sys
+     path = '/home/TU_USUARIO/app'
+     if path not in sys.path:
+         sys.path.insert(0, path)
+     from padel_app import app as application
+     ```
+7. Pulsar **Reload** para reiniciar la web app.
+
+8. La aplicación estará disponible en:
+   ```
+   https://TU_USUARIO.pythonanywhere.com
+   ```
+
+---
+
+Acceso Administrador
+--------------------
+El usuario administrador se crea automáticamente al inicializar la base de datos.
+Por motivos de seguridad, las credenciales de administración no se incluyen en este manual y deben ser comunicadas por un canal seguro.
+
+---
+
+Mantenimiento y Actualizaciones
+------------------------------
+- Para actualizar la aplicación, subir los archivos modificados y pulsar **Reload** en la pestaña Web.
+- Si se modifican dependencias, ejecutar:
+  ```
+  source /home/TU_USUARIO/myenv/bin/activate
+  pip install -r /home/TU_USUARIO/requirements.txt
+  ```
+- Revisar los logs de error y acceso en la pestaña Web para depuración.
+
+---
+
+Buenas Prácticas
+----------------
+- No publicar contraseñas ni datos sensibles en el manual ni en el repositorio.
+- Revisar `requirements.txt` antes de desplegar para evitar dependencias innecesarias.
+- Documentar cualquier cambio importante en el código o en la estructura del proyecto.
+- Para soporte responsive, asegurar que el CSS incluya media queries y el meta viewport esté en el `<head>`.
+
+---
+
+Contacto y Soporte
+------------------
+Para incidencias técnicas, contactar con la persona responsable del proyecto.
+Belén Caldera Moreno - padel.pr0.28@gmail.com
+
+---
+
+Fin del manual
