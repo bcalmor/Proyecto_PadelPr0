@@ -61,6 +61,15 @@ def is_admin_user(username):
 
 app.jinja_env.globals['is_admin_user'] = is_admin_user
 
+def get_initials(nombre, apellidos):
+    if not nombre or not apellidos:
+        return "??"
+    nombre = nombre.strip()
+    apellidos = apellidos.strip()
+    if not nombre or not apellidos:
+        return "??"
+    return (nombre[0] + apellidos[0]).upper()
+
 # ------------------- RUTAS PRINCIPALES -------------------
 
 @app.route('/')
@@ -78,7 +87,9 @@ def login():
         user = Usuario.query.filter_by(usuario=username).first()
         if user and check_password_hash(user.password, password):
             session['usuario'] = user.usuario
-            session['is_admin'] = user.is_admin
+            session['is_admin'] = user.is_admin  
+            session['user_photo'] = user.foto_url if user.foto_url else None
+            session['user_initials'] = get_initials(user.nombre, user.apellidos)
             flash('Inicio de sesión exitoso.', 'success')
             return redirect(url_for('home_redirect'))
         else:
@@ -96,9 +107,14 @@ def register():
             "telefono": request.form['telefono'],
             "email": request.form['email'],
             "usuario": request.form['usuario'],
-            "password": request.form['password']
+            "password": request.form['password'],
+            "confirm_password": request.form['confirm_password']
         }
 
+        if datos['password'] != datos['confirm_password']:
+            flash('Las contraseñas no coinciden.', 'danger')
+            return render_template('register.html')
+        
         # Validaciones personalizadas (por ejemplo, formato, longitud, etc.)
         errores = validar_datos_registro(datos)
 
@@ -182,7 +198,22 @@ def mis_datos():
         usuario.email = request.form['email']
         usuario.direccion = request.form.get('direccion', '')
         usuario.fecha_nacimiento = request.form.get('fecha_nacimiento', '')
-        db.session.commit()# <-- Transacción implícita aquí
+
+        # --- NUEVO: Guardar foto si se sube ---
+        if 'foto' in request.files:
+            foto = request.files['foto']
+            if foto and foto.filename != '':
+                filename = f"{usuario.usuario}_{foto.filename}"
+                ruta = os.path.join(app.static_folder, 'images', filename)
+                os.makedirs(os.path.dirname(ruta), exist_ok=True)
+                foto.save(ruta)
+                usuario.foto_url = url_for('static', filename=f'images/{filename}')
+                session['user_photo'] = usuario.foto_url
+        # Actualizar iniciales y admin en sesión
+        session['user_initials'] = get_initials(usuario.nombre, usuario.apellidos)
+        session['is_admin'] = usuario.is_admin  # <-- AÑADE ESTA LÍNEA
+
+        db.session.commit()
         flash('Tus datos han sido actualizados correctamente.', 'success')
         return redirect(url_for('mis_datos'))
     return render_template('mis_datos.html', usuario=usuario)
@@ -203,7 +234,22 @@ def guardar_datos():
     usuario.email = request.form['email']
     usuario.direccion = request.form.get('direccion', '')
     usuario.fecha_nacimiento = request.form.get('fecha_nacimiento', '')
-    db.session.commit()# <-- Transacción implícita aquí
+
+    # --- NUEVO: Guardar foto si se sube ---
+    if 'foto' in request.files:
+        foto = request.files['foto']
+        if foto and foto.filename != '':
+            filename = f"{usuario.usuario}_{foto.filename}"
+            ruta = os.path.join(app.static_folder, 'images', filename)
+            os.makedirs(os.path.dirname(ruta), exist_ok=True)
+            foto.save(ruta)
+            usuario.foto_url = url_for('static', filename=f'images/{filename}')
+            session['user_photo'] = usuario.foto_url
+    # Actualizar iniciales y admin en sesión
+    session['user_initials'] = get_initials(usuario.nombre, usuario.apellidos)
+    session['is_admin'] = usuario.is_admin  # <-- AÑADE ESTA LÍNEA
+
+    db.session.commit()
     flash('Tus datos han sido actualizados correctamente.', 'success')
     return redirect(url_for('mis_datos'))
 
@@ -239,6 +285,8 @@ def logout():
     """Cerrar sesión del usuario."""
     session.pop('usuario', None)
     session.pop('is_admin', None)
+    session.pop('user_photo', None)      # <-- Añade esto
+    session.pop('user_initials', None)   # <-- Y esto
     flash('Tu sesión ha sido cerrada.', 'info')
     return redirect(url_for('login'))
 

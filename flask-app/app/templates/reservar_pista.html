@@ -35,13 +35,14 @@
 
     <!-- Selección de club -->
     <div id="clubSelector">
-        <h3 class="card-title">🏟️ Selecciona Club</h3>
-        <select id="club" name="club" onchange="onClubChange()">
-            {% for club in clubes %}
-                <option value="{{ club.id }}">{{ club.nombre }}</option>
-            {% endfor %}
-        </select>
-    </div>
+    <h3 class="card-title">🏟️ Selecciona Club</h3>
+    <label for="club" class="club-label">Elige el centro:</label>
+    <select id="club" name="club" class="custom-select" onchange="onClubChange()">
+        {% for club in clubes %}
+            <option value="{{ club.id }}">{{ club.nombre }}</option>
+        {% endfor %}
+    </select>
+</div>
 
     <!-- Calendario -->
     <div id="calendar">
@@ -66,9 +67,9 @@
     <div id="resumen" style="display: none;">
         <h3>Resumen de la Reserva</h3>
         <p id="resumenTexto"></p>
-        <button onclick="confirmarReserva()">Confirmar Reserva sin pago</button>
+        <button class="btn" onclick="confirmarReserva()">Confirmar Reserva sin pago</button>
         <a href="{{ url_for('pago') }}">
-            <button>Realizar Pago</button>
+            <button class="btn">Realizar Pago</button>
         </a>
         
     </div>

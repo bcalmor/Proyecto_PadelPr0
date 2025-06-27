@@ -47,10 +47,12 @@ header h1 {
 .nav-menu {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
+    justify-content: flex-end; /* Esto alinea todo el menú a la derecha */
+    align-items: center;
     list-style: none;
     padding: 0;
     margin: 0;
+    width: 100%;
 }
 
 .nav-menu li {
@@ -363,16 +365,6 @@ input[type="email"]:focus {
     box-shadow: 0 0 5px #1F2A44;;
 }
 
-/* Button styles */
-button[type="submit"] {
-    background: #1F2A44; /* Azul */
-    color: #A3D900; /* Amarillo */
-}
-
-button[type="submit"]:hover {
-    background: #A3D900;  /* Fondo más oscuro */
-    color: #1F2A44;
-}
 
 /* Botón principal */
 .btn {
@@ -380,7 +372,7 @@ button[type="submit"]:hover {
     padding: 10px 20px;
     font-size: 16px;
     font-weight: bold;
-    color: #ffffff;
+    color: #A3D900; 
     background-color: #1F2A44; /* Azul claro */
     border: none;
     border-radius: 25px;
@@ -389,8 +381,10 @@ button[type="submit"]:hover {
 }
 
 .btn:hover {
-    background-color: #1F2A44; /* Azul más oscuro */
+    background-color: #A3D900; /* Azul más oscuro */
     transform: scale(1.05); /* Efecto de zoom */
+    color: #1F2A44;
+    border: 1px solid #1F2A44;; 
 }
 
 .btn-danger {
@@ -1254,40 +1248,27 @@ h1, h2, h3, h4, h5, h6 {
     box-sizing: border-box;
 }
 
-.register-form button[type="submit"] {
-    background: #1F2A44; /* Azul */
-    color: #A3D900; /* Amarillo */
-    padding: 10px 15px;
-    border: none;
-    border-radius: 5px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.register-form button[type="submit"]:hover {
-    background: #1b5e20; /* Verde oscuro */
-}
-
 .radio-group {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;      /* Ahora en horizontal */
     gap: 12px;
     margin-top: 10px;
     align-items: center;
+    justify-content: center;  /* Centrado horizontal */
 }
 
 .radio-option {
     font-size: 1.05em;
-    background: #f2f7fd;
+    background: #A3D900;
+    color:#1F2A44;
     padding: 10px 15px;
     border-radius: 6px;
-    border: 1px solid #cce0f8;
+    border: 1px solid #1F2A44;
     transition: all 0.2s ease;
     cursor: pointer;
-    width: 20%;
- 
-
+    width: auto;              /* Ajuste automático al contenido */
+    min-width: 160px;         /* Opcional: ancho mínimo para mejor visual */
+    text-align: center;
 }
 
 .radio-option:hover {
@@ -2105,4 +2086,46 @@ html, body {
 }
 *, *::before, *::after {
     box-sizing: border-box;
+}
+.custom-select {
+    width: 60%;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 2px solid #1F2A44;
+    background: #fff;
+    color: #1F2A44;
+    font-size: 1.1em;
+    margin-top: 8px;
+    margin-bottom: 16px;
+    transition: border 0.2s;
+}
+.custom-select:focus {
+    border: 2px solid #A3D900;
+    outline: none;
+}
+.club-label {
+    font-weight: bold;
+    color: #1F2A44;
+    margin-bottom: 5px;
+    display: block;
+}
+.user-photo {
+    width: 50px;           /* antes 40px */
+    height: 50px;          /* antes 40px */
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 10px;
+    background: #1F2A44;
+    color: #A3D900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 2em;        /* antes 1.2em */
+    border: 2.5px solid #A3D900;
+    box-shadow: 0 2px 8px #0002;
+}
+.user-initials {
+    background: #1F2A44;
+    color: #A3D900;
 }

@@ -12,29 +12,30 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 db = SQLAlchemy()
 
 class Usuario(db.Model):
+    __tablename__ = 'usuarios'
     id = db.Column(db.Integer, primary_key=True)
-    dni = db.Column(db.String(12), nullable=False)
-    nombre = db.Column(db.String(50), nullable=False)
-    apellidos = db.Column(db.String(100), nullable=False)
-    telefono = db.Column(db.String(15), nullable=False)
+    usuario = db.Column(db.String(64), unique=True, nullable=False)
+    nombre = db.Column(db.String(64), nullable=False)
+    apellidos = db.Column(db.String(64), nullable=False)
+    dni = db.Column(db.String(20), unique=True, nullable=False)
+    telefono = db.Column(db.String(20), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    usuario = db.Column(db.String(50), unique=True, nullable=False)
-    password = db.Column(db.String(200), nullable=False)
-    direccion = db.Column(db.String(200))
+    password = db.Column(db.String(128), nullable=False)
+    direccion = db.Column(db.String(128))
     fecha_nacimiento = db.Column(db.String(20))
     is_admin = db.Column(db.Boolean, default=False)
+    foto_url = db.Column(db.String(256))  # <--- Añade esta línea
 
 class Reserva(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    usuario_id = db.Column(db.Integer, db.ForeignKey('usuario.id'), nullable=False)
-    club_id = db.Column(db.Integer, db.ForeignKey('club.id'), nullable=False)  # NUEVO
+    usuario_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'), nullable=False)  # <-- Cambiado aquí
+    club_id = db.Column(db.Integer, db.ForeignKey('club.id'), nullable=False)
     fecha = db.Column(db.String(20), nullable=False)
     hora = db.Column(db.String(10), nullable=False)
     pista = db.Column(db.String(20), nullable=False)
     numero_pista = db.Column(db.Integer, nullable=False)
     usuario = db.relationship('Usuario', backref=db.backref('reservas', lazy=True))
-    club = db.relationship('Club', backref=db.backref('reservas', lazy=True))  # NUEVO
-
+    club = db.relationship('Club', backref=db.backref('reservas', lazy=True))
 class Torneo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(100), unique=True, nullable=False)
