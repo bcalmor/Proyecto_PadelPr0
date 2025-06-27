@@ -6,33 +6,32 @@
 <style>
   body {
     background-image: none !important;
-    background-color: #f0f0f0 !important; /* el color que quieras */
+    background-color: #f0f0f0 !important;
   }
 </style>
 <div class="container">
     <h2 class="main-title">Modificar Torneo</h2>
     <form action="{{ url_for('edit_torneo', nombre=torneo.nombre) }}" method="POST">
         <label for="nombre"><strong>Nombre del Torneo:</strong></label>
-        <input type="text" id="nombre" name="nombre" required>
+        <input type="text" id="nombre" name="nombre" value="{{ torneo.nombre }}" required>
 
         <label for="fecha"><strong>Fecha:</strong></label>
-        <input type="date" id="fecha" name="fecha" required>
+        <input type="date" id="fecha" name="fecha" value="{{ torneo.fecha }}" required>
 
         <label for="hora"><strong>Hora:</strong></label>
-        <input type="time" id="hora" name="hora" required>
-
+        <input type="time" id="hora" name="hora" value="{{ torneo.hora }}" required>
 
         <label for="ubicacion"><strong>Ubicación:</strong></label>
-        <input type="text" id="ubicacion" name="ubicacion" required>
+        <input type="text" id="ubicacion" name="ubicacion" value="{{ torneo.ubicacion }}" required>
 
         <label for="precio"><strong>Precio:</strong></label>
-        <input type="text" id="precio" name="precio" required>
+        <input type="text" id="precio" name="precio" value="{{ torneo.precio }}" required>
 
         <label for="descripcion"><strong>Descripción:</strong></label>
-        <textarea id="descripcion" name="descripcion" required></textarea>
+        <textarea id="descripcion" name="descripcion" required>{{ torneo.descripcion }}</textarea>
 
         <label for="premios"><strong>Premios:</strong></label>
-        <textarea id="premios" name="premios" rows="5" placeholder="Escribe los premios, uno por línea" required></textarea>
+        <textarea id="premios" name="premios" rows="5" placeholder="Escribe los premios, uno por línea" required>{{ torneo.premios }}</textarea>
 
         <button type="submit" class="btn btn-primary">Guardar Cambios</button>
     </form>

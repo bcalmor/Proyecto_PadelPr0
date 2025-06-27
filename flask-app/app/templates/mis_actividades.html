@@ -6,7 +6,19 @@
 <style>
   body {
     background-image: none !important;
-    background-color: #f0f0f0 !important; /* el color que quieras */
+    background-color: #f0f0f0 !important;
+  }
+  /* Modal personalizado */
+  .modal {
+    display: none; position: fixed; z-index: 10000; left: 0; top: 0; width: 100vw; height: 100vh;
+    background: rgba(0,0,0,0.4); justify-content: center; align-items: center;
+  }
+  .modal-content {
+    background: #fff; padding: 32px 24px; border-radius: 12px; text-align: center; min-width: 300px;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.2);
+  }
+  .modal-content .btn {
+    margin: 12px 8px 0 8px;
   }
 </style>
 <div class="container">
@@ -23,7 +35,7 @@
             <p><strong>Descripción:</strong> {{ actividad.descripcion }}</p>
             <p><strong>Precio inscripción:</strong> {{ actividad.precio }}</p>
             <p><strong>Premio:</strong> {{ actividad.premios }}</p>
-            <button class="btn cancelar-btn" onclick="cancelarInscripcion('{{ actividad.nombre }}')">
+            <button class="btn cancelar-btn" onclick="abrirModalCancelar('{{ actividad.nombre }}')">
                 Cancelar Inscripción
             </button>
         </li>
@@ -31,24 +43,60 @@
     </ul>
 </div>
 
-<script>
-async function cancelarInscripcion(torneo) {
-    if (!confirm("¿Estás seguro de que deseas cancelar tu inscripción a este torneo?")) {
-        return;
-    }
+<!-- Modal de confirmación bonito -->
+<div id="modal-cancelar" class="modal">
+  <div class="modal-content">
+    <span id="modal-cancelar-titulo" style="font-size:1.2em; font-weight:bold;">¿Estás seguro de que deseas cancelar tu inscripción?</span>
+    <div id="modal-cancelar-torneo" style="margin: 10px 0 20px 0; color:#555;"></div>
+    <button class="btn" style="background:#c0392b;color:#fff;" onclick="confirmarCancelarInscripcion()">Sí, cancelar</button>
+    <button class="btn" onclick="cerrarModalCancelar()">No, volver</button>
+  </div>
+</div>
 
+<!-- Toast para mensajes bonitos -->
+<div id="toast-message" style="display:none; position:fixed; bottom:30px; left:50%; transform:translateX(-50%); background:#333; color:#fff; padding:16px 32px; border-radius:8px; font-size:1.1em; z-index:9999; box-shadow:0 2px 8px rgba(0,0,0,0.2);"></div>
+
+<script>
+let torneoCancelar = null;
+
+function showToast(msg, color="#333") {
+    const toast = document.getElementById('toast-message');
+    toast.textContent = msg;
+    toast.style.background = color;
+    toast.style.display = 'block';
+    setTimeout(() => {
+        toast.style.display = 'none';
+    }, 3000);
+}
+
+// Abrir modal bonito
+function abrirModalCancelar(nombreTorneo) {
+    torneoCancelar = nombreTorneo;
+    document.getElementById('modal-cancelar-torneo').textContent = nombreTorneo;
+    document.getElementById('modal-cancelar').style.display = 'flex';
+}
+
+// Cerrar modal
+function cerrarModalCancelar() {
+    document.getElementById('modal-cancelar').style.display = 'none';
+    torneoCancelar = null;
+}
+
+// Confirmar cancelación
+async function confirmarCancelarInscripcion() {
+    if (!torneoCancelar) return;
     const response = await fetch('/api/cancelar_inscripcion', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ torneo }),
+        body: JSON.stringify({ torneo: torneoCancelar }),
     });
-
     const data = await response.json();
+    cerrarModalCancelar();
     if (data.error) {
-        alert(data.error);
+        showToast(data.error, "#c0392b");
     } else {
-        alert(data.message);
-        location.reload(); // Recargar la página para actualizar la lista de actividades
+        showToast(data.message, "#27ae60");
+        setTimeout(() => location.reload(), 1200);
     }
 }
 </script>

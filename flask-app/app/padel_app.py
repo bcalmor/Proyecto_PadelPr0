@@ -70,6 +70,15 @@ def get_initials(nombre, apellidos):
         return "??"
     return (nombre[0] + apellidos[0]).upper()
 
+def eliminar_reservas_pasadas():
+    ahora = datetime.now()
+    reservas = Reserva.query.all()
+    for reserva in reservas:
+        fecha_hora = datetime.strptime(f"{reserva.fecha} {reserva.hora}", "%Y-%m-%d %H:%M")
+        if fecha_hora < ahora:
+            db.session.delete(reserva)
+    db.session.commit()
+
 # ------------------- RUTAS PRINCIPALES -------------------
 
 @app.route('/')
@@ -259,6 +268,7 @@ def mis_reservas():
     if 'usuario' not in session:
         flash('Debes iniciar sesión para ver tus reservas.', 'warning')
         return redirect(url_for('login'))
+    eliminar_reservas_pasadas()  # <-- Elimina reservas pasadas antes de mostrar
     usuario = Usuario.query.filter_by(usuario=session['usuario']).first()
     reservas = Reserva.query.filter_by(usuario_id=usuario.id).order_by(Reserva.fecha, Reserva.hora).all()
     return render_template('mis_reservas.html', reservas=reservas)
@@ -418,24 +428,31 @@ def torneos():
 
 @app.route('/inscribir_torneo', methods=['POST'])
 def inscribir_torneo():
-    """
-    Inscripción del usuario en un torneo.
-    Añade el usuario a la lista de inscritos y envía email de confirmación.
-    """
     if 'usuario' not in session:
         return jsonify({"success": False, "error": "Debes iniciar sesión."})
     data = request.get_json()
     torneo = Torneo.query.filter_by(nombre=data['torneo']).first()
     if not torneo:
         return jsonify({"success": False, "error": "Torneo no encontrado."})
+
+    # --- NO PERMITIR INSCRIPCIÓN SI EL TORNEO YA HA PASADO ---
+    hoy = datetime.now().date()
+    try:
+        fecha_torneo = datetime.strptime(torneo.fecha, "%Y-%m-%d").date()
+    except Exception:
+        return jsonify({"success": False, "error": "Fecha de torneo inválida."})
+
+    if fecha_torneo < hoy:
+        return jsonify({"success": False, "error": "No puedes inscribirte en un torneo pasado."})
+
     inscritos = torneo.inscritos.split(',') if torneo.inscritos else []
     if session['usuario'] in inscritos:
-        return jsonify({"success": False, "error": "Ya estás inscrito."})
+        return jsonify({"success": False, "error": "Ya estás inscrito en este torneo."})
+
     inscritos.append(session['usuario'])
     torneo.inscritos = ','.join(inscritos)
-    db.session.commit()# <-- Transacción implícita aquí
+    db.session.commit()
 
-    # Enviar email de confirmación de inscripción a torneo
     usuario = Usuario.query.filter_by(usuario=session['usuario']).first()
     enviar_email(
         "Confirmación de Inscripción a Torneo",

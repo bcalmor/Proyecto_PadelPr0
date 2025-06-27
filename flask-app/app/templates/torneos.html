@@ -50,7 +50,20 @@
 </div>
 {% endif %}
 
+<!-- Toast para mensajes bonitos -->
+<div id="toast-message" style="display:none; position:fixed; bottom:30px; left:50%; transform:translateX(-50%); background:#333; color:#fff; padding:16px 32px; border-radius:8px; font-size:1.1em; z-index:9999; box-shadow:0 2px 8px rgba(0,0,0,0.2);"></div>
+
 <script>
+    function showToast(msg, color="#333") {
+        const toast = document.getElementById('toast-message');
+        toast.textContent = msg;
+        toast.style.background = color;
+        toast.style.display = 'block';
+        setTimeout(() => {
+            toast.style.display = 'none';
+        }, 3000);
+    }
+
     function handleInscripcion(event, torneo) {
         event.preventDefault();
 
@@ -66,8 +79,6 @@
         const modal = document.getElementById('modal-confirmacion');
         const torneo = modal.dataset.torneo;
 
-        console.log("Enviando datos al servidor:", { torneo }); // Log para depuración
-
         // Enviar la inscripción al servidor
         fetch("/inscribir_torneo", {
             method: "POST",
@@ -78,18 +89,17 @@
         })
         .then(response => response.json())
         .then(data => {
-            console.log("Respuesta del servidor:", data); // Log para depuración
             if (data.success) {
-                alert("¡Inscripción realizada con éxito!");
+                showToast("¡Inscripción realizada con éxito!", "#27ae60");
                 cerrarModal();
-                window.location.reload(); // Recargar la página para reflejar los cambios
+                setTimeout(() => window.location.reload(), 1200);
             } else {
-                alert("Hubo un problema con la inscripción. Inténtalo de nuevo.");
+                showToast(data.error || "Hubo un problema con la inscripción.", "#c0392b");
             }
         })
         .catch(error => {
-            console.error("Error en la solicitud:", error); // Log para depuración
-            alert("Hubo un problema con la inscripción. Inténtalo de nuevo.");
+            console.error("Error en la solicitud:", error);
+            showToast("Hubo un problema con la inscripción. Inténtalo de nuevo.", "#c0392b");
         });
     }
 

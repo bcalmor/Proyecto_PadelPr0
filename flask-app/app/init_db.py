@@ -17,7 +17,7 @@ with app.app_context():
             telefono='000000000',
             email='admin@padelpr0.com',
             usuario='admin',
-            password=generate_password_hash('admin123'),  # Contraseña por defecto
+            password='pbkdf2:sha256:600000$5nBTK8NIfkRxrS6s$0b86f457fe8272557b48df358f77746d2521a9a180e041ae196dac46fb5bc4e3',  # Contraseña: 123456
             direccion='',
             fecha_nacimiento='',
             is_admin=True
